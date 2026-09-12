@@ -1,0 +1,13 @@
+# Bugfix Workflow
+
+REPRODUCE → EVIDENCE → CLASSIFY → RCA → FIX → REGRESSION → RETEST → REVIEW → GATE
+
+Failure classes:
+PRODUCT_BUG
+TEST_BUG
+ENVIRONMENT
+FLAKY
+DEPENDENCY
+UNKNOWN
+
+Maximum repair iterations: 3.

@@ -1,0 +1,39 @@
+{
+  "type": "object",
+  "required": [
+    "decision",
+    "evidence",
+    "open_risks",
+    "human_approval_required"
+  ],
+  "properties": {
+    "decision": {
+      "enum": [
+        "PASS",
+        "PASS_WITH_RISK",
+        "BLOCKED"
+      ]
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "open_risks": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "blocking_issues": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "human_approval_required": {
+      "type": "boolean"
+    }
+  }
+}

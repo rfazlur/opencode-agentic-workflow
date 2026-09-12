@@ -1,0 +1,55 @@
+{
+  "type": "object",
+  "required": [
+    "task_id",
+    "type",
+    "scope",
+    "risk",
+    "complexity",
+    "request"
+  ],
+  "properties": {
+    "task_id": {
+      "type": "string"
+    },
+    "type": {
+      "enum": [
+        "feature",
+        "bug",
+        "refactor",
+        "qa",
+        "automation",
+        "review",
+        "release",
+        "investigation"
+      ]
+    },
+    "scope": {
+      "type": "string"
+    },
+    "risk": {
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "critical"
+      ]
+    },
+    "complexity": {
+      "enum": [
+        "simple",
+        "medium",
+        "complex"
+      ]
+    },
+    "request": {
+      "type": "string"
+    },
+    "acceptance_criteria": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

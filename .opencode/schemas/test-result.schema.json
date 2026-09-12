@@ -1,0 +1,40 @@
+{
+  "type": "object",
+  "required": [
+    "test_run_id",
+    "status",
+    "command",
+    "evidence"
+  ],
+  "properties": {
+    "test_run_id": {
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "PASS",
+        "FAIL",
+        "SKIPPED",
+        "ERROR"
+      ]
+    },
+    "command": {
+      "type": "string"
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "duration_ms": {
+      "type": "integer"
+    },
+    "failed_tests": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}
