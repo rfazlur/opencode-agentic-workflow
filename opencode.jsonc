@@ -1,243 +1,210 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "default_agent": "orchestrator",
-  "model": "MODEL_FREE",
-
-  "permissions": [
-    { "action": "read", "resource": "*.env", "effect": "deny" },
-    { "action": "read", "resource": "*.env.*", "effect": "deny" },
-
-    { "action": "shell", "resource": "git status *", "effect": "allow" },
-    { "action": "shell", "resource": "git diff *", "effect": "allow" },
-    { "action": "shell", "resource": "git log *", "effect": "allow" },
-
-    { "action": "shell", "resource": "git commit *", "effect": "ask" },
-    { "action": "shell", "resource": "git push *", "effect": "ask" }
+  "plugin": [
+    "@vheins/opencode-9router@latest"
   ],
+  "default_agent": "orchestrator",
+  "subagent_depth": 2,
 
-  "agents": {
+  "permission": {
+    "read": {
+      "*": "allow",
+      "*.env": "deny",
+      "*.env.*": "deny",
+      "*.env.example": "allow"
+    },
+    "edit": "allow",
+    "bash": {
+      "*": "ask",
+      "git status*": "allow",
+      "git diff*": "allow",
+      "git log*": "allow",
+      "git show*": "allow",
+      "git branch*": "allow",
+      "git push*": "deny",
+      "git reset --hard*": "deny",
+      "rm -rf*": "deny"
+    },
+    "task": "allow"
+  },
+
+  "agent": {
     "orchestrator": {
       "mode": "primary",
-      "model": "MODEL_GEMINI",
-      "steps": 30,
-      "permissions": [
-        { "action": "subagent", "resource": "*", "effect": "allow" },
-        { "action": "edit", "resource": ".opencode/runtime/*", "effect": "allow" },
-        { "action": "edit", "resource": ".opencode/artifacts/*", "effect": "allow" },
-        { "action": "shell", "resource": "*", "effect": "ask" }
-      ]
+      "model": "9router/combo-sonnet",
+      "steps": 40
+    },
+
+    "router": {
+      "mode": "subagent",
+      "model": "9router/combo-gemini",
+      "steps": 20,
+      "permission": {
+        "edit": "deny",
+        "bash": "deny"
+      }
+    },
+
+    "cheap-worker": {
+      "mode": "subagent",
+      "model": "9router/combo-free",
+      "steps": 15,
+      "permission": {
+        "edit": "deny",
+        "bash": "deny"
+      }
     },
 
     "planner": {
       "mode": "subagent",
-      "model": "MODEL_GEMINI",
-      "steps": 12,
-      "permissions": [
-        { "action": "edit", "resource": "*", "effect": "deny" },
-        { "action": "shell", "resource": "*", "effect": "deny" }
-      ]
+      "model": "9router/combo-gemini",
+      "steps": 18,
+      "permission": {
+        "edit": "deny",
+        "bash": "deny"
+      }
     },
 
     "architect": {
       "mode": "subagent",
-      "model": "MODEL_CLAUDE",
-      "steps": 15,
-      "permissions": [
-        { "action": "edit", "resource": "*", "effect": "deny" },
-        { "action": "shell", "resource": "*", "effect": "deny" }
-      ]
+      "model": "9router/combo-opus",
+      "steps": 25,
+      "permission": {
+        "edit": "deny",
+        "bash": "deny"
+      }
     },
 
     "debater": {
       "mode": "subagent",
-      "model": "MODEL_CLAUDE",
-      "steps": 12,
-      "permissions": [
-        { "action": "edit", "resource": "*", "effect": "deny" },
-        { "action": "shell", "resource": "*", "effect": "deny" }
-      ]
+      "model": "9router/combo-opus",
+      "steps": 20,
+      "permission": {
+        "edit": "deny",
+        "bash": "deny"
+      }
     },
 
     "developer": {
       "mode": "subagent",
-      "model": "MODEL_CLAUDE",
-      "steps": 35,
-      "permissions": [
-        { "action": "read", "resource": "*.env", "effect": "deny" },
-        { "action": "read", "resource": "*.env.*", "effect": "deny" },
-        { "action": "edit", "resource": "*", "effect": "allow" },
-        { "action": "shell", "resource": "git push *", "effect": "deny" },
-        { "action": "shell", "resource": "git reset --hard *", "effect": "deny" },
-        { "action": "shell", "resource": "rm -rf *", "effect": "deny" }
-      ]
+      "model": "9router/combo-opus",
+      "steps": 45
+    },
+
+    "developer-standard": {
+      "mode": "subagent",
+      "model": "9router/combo-sonnet",
+      "steps": 35
     },
 
     "qa-lead": {
       "mode": "subagent",
-      "model": "MODEL_GEMINI",
-      "steps": 18,
-      "permissions": [
-        { "action": "edit", "resource": "*", "effect": "deny" },
-        { "action": "edit", "resource": ".opencode/runtime/*", "effect": "allow" },
-        { "action": "edit", "resource": ".opencode/artifacts/*", "effect": "allow" },
-        { "action": "shell", "resource": "*", "effect": "deny" }
-      ]
+      "model": "9router/combo-gemini",
+      "steps": 22,
+      "permission": {
+        "edit": "deny",
+        "bash": "deny"
+      }
     },
 
     "test-designer": {
       "mode": "subagent",
-      "model": "MODEL_GEMINI",
-      "steps": 18,
-      "permissions": [
-        { "action": "edit", "resource": "*", "effect": "deny" },
-        { "action": "edit", "resource": ".opencode/runtime/*", "effect": "allow" },
-        { "action": "edit", "resource": ".opencode/artifacts/*", "effect": "allow" }
-      ]
+      "model": "9router/combo-gemini",
+      "steps": 22,
+      "permission": {
+        "edit": "deny",
+        "bash": "deny"
+      }
     },
 
     "automation-engineer": {
       "mode": "subagent",
-      "model": "MODEL_CLAUDE",
-      "steps": 30,
-      "permissions": [
-        { "action": "read", "resource": "*.env", "effect": "deny" },
-        { "action": "read", "resource": "*.env.*", "effect": "deny" },
-        { "action": "edit", "resource": "*", "effect": "allow" },
-        { "action": "shell", "resource": "git push *", "effect": "deny" }
-      ]
+      "model": "9router/combo-sonnet",
+      "steps": 35
     },
 
     "api-tester": {
       "mode": "subagent",
-      "model": "MODEL_GEMINI",
-      "steps": 22,
-      "permissions": [
-        { "action": "edit", "resource": "*", "effect": "deny" },
-        { "action": "edit", "resource": ".opencode/runtime/*", "effect": "allow" },
-        { "action": "edit", "resource": ".opencode/artifacts/*", "effect": "allow" },
-        { "action": "shell", "resource": "*", "effect": "ask" }
-      ]
+      "model": "9router/combo-gemini",
+      "steps": 25,
+      "permission": {
+        "edit": "deny"
+      }
     },
 
     "ui-tester": {
       "mode": "subagent",
-      "model": "MODEL_GEMINI",
-      "steps": 22,
-      "permissions": [
-        { "action": "edit", "resource": "*", "effect": "deny" },
-        { "action": "edit", "resource": ".opencode/runtime/*", "effect": "allow" },
-        { "action": "edit", "resource": ".opencode/artifacts/*", "effect": "allow" },
-        { "action": "shell", "resource": "*", "effect": "ask" }
-      ]
+      "model": "9router/combo-gemini",
+      "steps": 25,
+      "permission": {
+        "edit": "deny"
+      }
     },
 
     "failure-analyzer": {
       "mode": "subagent",
-      "model": "MODEL_GEMINI",
-      "steps": 18,
-      "permissions": [
-        { "action": "edit", "resource": "*", "effect": "deny" },
-        { "action": "edit", "resource": ".opencode/runtime/*", "effect": "allow" },
-        { "action": "edit", "resource": ".opencode/artifacts/*", "effect": "allow" }
-      ]
+      "model": "9router/combo-gemini",
+      "steps": 22,
+      "permission": {
+        "edit": "deny",
+        "bash": "deny"
+      }
     },
 
     "debugger": {
       "mode": "subagent",
-      "model": "MODEL_CLAUDE",
-      "steps": 30,
-      "permissions": [
-        { "action": "read", "resource": "*.env", "effect": "deny" },
-        { "action": "read", "resource": "*.env.*", "effect": "deny" },
-        { "action": "edit", "resource": ".opencode/runtime/*", "effect": "allow" },
-        { "action": "edit", "resource": ".opencode/artifacts/*", "effect": "allow" },
-        { "action": "edit", "resource": "*", "effect": "allow" },
-        { "action": "shell", "resource": "git reset --hard *", "effect": "deny" },
-        { "action": "shell", "resource": "rm -rf *", "effect": "deny" }
-      ]
+      "model": "9router/combo-opus",
+      "steps": 45
     },
 
     "flaky-test-analyzer": {
       "mode": "subagent",
-      "model": "MODEL_GEMINI",
-      "steps": 15,
-      "permissions": [
-        { "action": "edit", "resource": "*", "effect": "deny" },
-        { "action": "edit", "resource": ".opencode/runtime/*", "effect": "allow" }
-      ]
+      "model": "9router/combo-gemini",
+      "steps": 20,
+      "permission": {
+        "edit": "deny",
+        "bash": "deny"
+      }
     },
 
     "performance-reviewer": {
       "mode": "subagent",
-      "model": "MODEL_CLAUDE",
-      "steps": 15,
-      "permissions": [
-        { "action": "edit", "resource": "*", "effect": "deny" },
-        { "action": "shell", "resource": "*", "effect": "deny" }
-      ]
+      "model": "9router/combo-opus",
+      "steps": 25,
+      "permission": {
+        "edit": "deny",
+        "bash": "deny"
+      }
     },
 
     "code-reviewer": {
       "mode": "subagent",
-      "model": "MODEL_CLAUDE",
-      "steps": 18,
-      "permissions": [
-        { "action": "edit", "resource": "*", "effect": "deny" },
-        { "action": "shell", "resource": "*", "effect": "deny" }
-      ]
+      "model": "9router/combo-opus",
+      "steps": 25,
+      "permission": {
+        "edit": "deny",
+        "bash": "deny"
+      }
     },
 
     "security-reviewer": {
       "mode": "subagent",
-      "model": "MODEL_CLAUDE",
-      "steps": 18,
-      "permissions": [
-        { "action": "edit", "resource": "*", "effect": "deny" },
-        { "action": "shell", "resource": "*", "effect": "deny" }
-      ]
+      "model": "9router/combo-opus",
+      "steps": 25,
+      "permission": {
+        "edit": "deny",
+        "bash": "deny"
+      }
     },
 
     "release-gate": {
       "mode": "subagent",
-      "model": "MODEL_CLAUDE",
-      "steps": 15,
-      "permissions": [
-        { "action": "edit", "resource": "*", "effect": "deny" },
-        { "action": "shell", "resource": "*", "effect": "deny" }
-      ]
-    }
-  },
-
-  "commands": {
-    "feature": {
-      "description": "Full feature development and QA lifecycle",
-      "template": "Run the V3 feature workflow for: $ARGUMENTS. Classify the task, create a task ID and state, run planning/architecture/QA/debate as appropriate, implement, test, classify failures, repair up to 3 times, independently review, run security review when relevant, and execute release gate. Never invent evidence.",
-      "agent": "orchestrator"
-    },
-    "bug": {
-      "description": "Reproduce, diagnose, fix and regression-test a bug",
-      "template": "Run the V3 bug workflow for: $ARGUMENTS. Establish evidence, classify failure, perform RCA, implement the minimal fix, add regression coverage, retest up to 3 times, review and gate.",
-      "agent": "orchestrator"
-    },
-    "qa": {
-      "description": "Risk-based QA workflow",
-      "template": "Run the V3 QA workflow for: $ARGUMENTS. Create risk analysis, requirements traceability, test design, relevant API/UI execution, failure classification and a release recommendation.",
-      "agent": "orchestrator"
-    },
-    "automation": {
-      "description": "Build and verify test automation",
-      "template": "Run the V3 automation workflow for: $ARGUMENTS. Inspect the existing framework, design tests, implement automation, execute it, classify failures, repair up to 3 times and report evidence.",
-      "agent": "orchestrator"
-    },
-    "review": {
-      "description": "Independent review workflow",
-      "template": "Run the V3 review workflow for: $ARGUMENTS. Execute code review, security review when relevant, performance review when relevant, then release gate. Do not modify application code.",
-      "agent": "orchestrator"
-    },
-    "release": {
-      "description": "Release gate workflow",
-      "template": "Run the V3 release workflow for: $ARGUMENTS. Inspect requirements, test evidence, defects, code review, security review and risks. Return PASS, PASS_WITH_RISK or BLOCKED. Do not modify files.",
-      "agent": "orchestrator"
+      "model": "9router/combo-opus",
+      "steps": 20,
+      "permission": {
+        "edit": "deny",
+        "bash": "deny"
+      }
     }
   }
 }
